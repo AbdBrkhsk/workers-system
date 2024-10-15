@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\{AdminController, WorkerAuthController, ClientAuthController};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -16,14 +16,30 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'auth/admin'
+Route::prefix('auth')->group(function () {
 
-], function ($router) {
-    Route::post('/login', [AdminController::class, 'login']);
-    Route::post('/register', [AdminController::class, 'register']);
-    Route::post('/logout', [AdminController::class, 'logout']);
-    Route::post('/refresh', [AdminController::class, 'refresh']);
-    Route::get('/user-profile', [AdminController::class, 'userProfile']);    
+        Route::controller(AdminController::class)->prefix('admin')->group(function () {
+            Route::post('/login', 'login');
+            Route::post('/register',  'register');
+            Route::post('/logout', 'logout');
+            Route::post('/refresh', 'refresh');
+            Route::get('/user-profile',  'userProfile');    
+        });
+        
+        Route::controller(WorkerAuthController::class)->prefix('worker')->group(function () {
+            Route::post('/login', 'login');
+            Route::post('/register', 'register');
+            Route::post('/logout',  'logout');
+            Route::post('/refresh', 'refresh');
+            Route::get('/user-profile',  'userProfile');    
+        });
+        
+        Route::controller(ClientAuthController::class)->prefix('client')->group(function () {
+            Route::post('/login', 'login');
+            Route::post('/register', 'register');
+            Route::post('/logout', 'logout');
+            Route::post('/refresh', 'refresh');
+            Route::get('/user-profile',  'userProfile');    
+        }); 
 });
+
